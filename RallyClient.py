@@ -31,9 +31,17 @@ RALLY_SCHEDULED_STATES = {
 class RallyClient:
     def __init__(self, basic_auth, project, logger, is_testing):
         """Instantiate and return a Rally client pointed at https://rally1.rallydev.com."""
-        self.client = Rally(RALLY_SERVER, basic_auth[0], basic_auth[1], workspace=RALLY_WORKSPACE, project=project)
+        # api_key = 'test_data_only'
+
         self.log = logger
         self.is_testing = is_testing
+
+        # if api_key:
+        #     self.client = Rally(RALLY_SERVER, api_key, workspace=RALLY_WORKSPACE, project=project)
+        # else:
+        #     self.client = Rally(RALLY_SERVER, basic_auth[0], basic_auth[1], workspace=RALLY_WORKSPACE, project=project)
+
+        self.client = Rally(RALLY_SERVER, basic_auth[0], basic_auth[1], workspace=RALLY_WORKSPACE, project=project)
 
     @staticmethod
     def get_value_from_response(entity, response):
@@ -59,6 +67,7 @@ class RallyClient:
         response = self.client.get(item_type, fetch=True, query=f'FormattedID = {item_id}')
         return self.get_value_from_response(item_type, response)
 
+    # TODO:  This probably is non-functional. Fix or remove.
     def get_iteration(self, item_id):
         return self.get_item(item_id, RALLY_ITEM_TYPES['Iteration'])
 
