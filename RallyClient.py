@@ -59,6 +59,9 @@ class RallyClient:
         response = self.client.get(item_type, fetch=True, query=f'FormattedID = {item_id}')
         return self.get_value_from_response(item_type, response)
 
+    def get_iteration(self, item_id):
+        return self.get_item(item_id, RALLY_ITEM_TYPES['Iteration'])
+
     def get_user_story(self, item_id):
         return self.get_item(item_id, RALLY_ITEM_TYPES['UserStory'])
 

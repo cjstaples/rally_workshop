@@ -15,6 +15,19 @@ from logging.config import fileConfig
 from RallyClient import RallyClient, RALLY_ITEM_TYPES
 
 
+def display_rally_releases(session):
+    logger = logging.getLogger('workshop')
+    logger.info('--- displaying rally releases')
+    response = session.get('Release', fetch="Project,Name,ReleaseStartDate,ReleaseDate",
+                         order="ReleaseDate")
+    for release in response:
+        rlsStart = release.ReleaseStartDate.split('T')[0]   # just need the date part
+    rlsDate = release.ReleaseDate.split('T')[0]             # ditto
+    logger.info('Project,Name,ReleaseStartDate,ReleaseDate')
+    logger.info(release.Project.Name, release.Name, rlsStart, rlsDate)
+    pass
+
+
 def display_rally_test_cases(session):
     logger = logging.getLogger('workshop')
     logger.info('--- displaying rally test cases')
@@ -30,8 +43,24 @@ def display_rally_test_sets(session):
 def display_rally_user_stories(session):
     logger = logging.getLogger('workshop')
     logger.info('--- displaying rally user stories')
-    pass
+    stories = session.get_allowed_values('UserStory')
+    for story in stories:
+        # storyDetails = story.details()
 
+        name = story.Name
+        formatted_id = story.FormattedID
+        try:
+            iteration = story.Iteration.Name
+        except:
+            iteration = 'None'
+        schedule_state = story.ScheduleState
+
+        logstring = '::::: '+str(formatted_id).ljust(8)\
+                    + ' :: '+str(schedule_state).ljust(12)\
+                    + ' :: '+str(iteration).ljust(14)\
+                    + ' :: '+str(name)
+        logger.info(logstring)
+    pass
 
 def initialize_rally_client(rally_auth, args):
     logger = logging.getLogger('workshop')
@@ -86,6 +115,8 @@ def main():
     session = initialize_rally_client(rally_auth, args)
     logger.debug(session)
 
+    # display_rally_releases(session)
+    # display_rally_user_story_sample(session,387227494600)
     display_rally_user_stories(session)
     display_rally_test_cases(session)
     display_rally_test_sets(session)
