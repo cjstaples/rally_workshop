@@ -1,5 +1,3 @@
-import sys
-
 from pyral import Rally
 
 RALLY_SERVER = 'rally1.rallydev.com'
@@ -28,20 +26,28 @@ RALLY_SCHEDULED_STATES = {
     'ACCEPTED': 'Accepted'
 }
 
-class RallyClient:
-    def __init__(self, basic_auth, project, logger, is_testing):
-        """Instantiate and return a Rally client pointed at https://rally1.rallydev.com."""
-        # api_key = 'test_data_only'
 
+class RallyClient:
+    """
+    Rally Client base
+    """
+    def __init__(self, basic_auth, api_key, project, logger, is_testing):
+        """
+        Instantiate and return a Rally client pointed at https://rally1.rallydev.com.
+        """
         self.log = logger
         self.is_testing = is_testing
+        # logger.info('::: ')
+        # logger.info('::: api_key: '+str(api_key))
 
-        # if api_key:
-        #     self.client = Rally(RALLY_SERVER, api_key, workspace=RALLY_WORKSPACE, project=project)
-        # else:
-        #     self.client = Rally(RALLY_SERVER, basic_auth[0], basic_auth[1], workspace=RALLY_WORKSPACE, project=project)
+        if api_key:
+            logger.info('::: authenticate via API key')
+            self.client = Rally(RALLY_SERVER, apikey=api_key, workspace=RALLY_WORKSPACE, project=project)
+        else:
+            logger.info('::: authenticate via user CREDS')
+            self.client = Rally(RALLY_SERVER, user=basic_auth[0], password=basic_auth[1], workspace=RALLY_WORKSPACE, project=project)
 
-        self.client = Rally(RALLY_SERVER, basic_auth[0], basic_auth[1], workspace=RALLY_WORKSPACE, project=project)
+        # self.client = Rally(RALLY_SERVER, user=basic_auth[0], password=basic_auth[1], workspace=RALLY_WORKSPACE, project=project)
 
     @staticmethod
     def get_value_from_response(entity, response):

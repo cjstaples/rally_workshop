@@ -115,33 +115,31 @@ def initialize_logger():
     return logger
 
 
-def initialize_rally_client(rally_auth, args):
+def initialize_rally_client(rally_auth, use_api, args):
     """
 
-    :param rally_auth:
+    :param rally_auth: will be either a dict of user creds or an api key depending on the use_api flag
+    :param use_api: differentiate between the auth types
     :param args:
     :return:
     """
     logger = logging.getLogger('workshop')
-    logger.info('--- initializing rally client / auth')
+    logger.info('--- initializing rally client')
+    logger.info('--- use_api: '+str(use_api))
+
+    if use_api:
+        logger.info('::: *** CHECKING A HARDCODED API KEY? PLACE HERE ***')
+        api_key = rally_auth
+        # make sure we don't pass any api key value to the user creds
+        rally_auth = None
+    else:
+        # rally_auth is the user creds
+        # pass nothing for the api_key
+        api_key = None
+        rally_auth = rally_auth
 
     session = []
-    session = RallyClient(rally_auth, ' '.join(args.rally_project), logger, args.test)
-    return session
-
-
-def initialize_rally_client_api(api_key, args):
-    """
-
-    :param api_key:
-    :param args:
-    :return:
-    """
-    logger = logging.getLogger('workshop')
-    logger.info('--- initializing rally client / api')
-
-    session = []
-    session = RallyClient(api_key, ' '.join(args.rally_project), logger, args.test)
+    session = RallyClient(rally_auth, api_key, ' '.join(args.rally_project), logger, args.test)
     return session
 
 
@@ -200,14 +198,24 @@ def main():
             limit = 10
 
     if args.api:
+        # use an api key if supplied
+        logger.info('::: args api found')
+        use_api = True
         api_key = args.api
-        session = initialize_rally_client_api(api_key, args)
+        # logger.info('::: ')
+        # logger.info('::: api_key: '+str(api_key))
+        session = initialize_rally_client(api_key, use_api, args)
     else:
+        logger.info('::: args api NOT found, checking for creds')
+        use_api = False
         if args.lastpass_rally_site_name:
             rally_auth = get_basic_auth_from_lastpass(args.lastpass_rally_site_name)
         else:
             rally_auth = prompt_for_auth('Rally')
-        session = initialize_rally_client(rally_auth, args)
+
+        # logger.info('::: ')
+        # logger.info('::: rally_auth: '+str(rally_auth))
+        session = initialize_rally_client(rally_auth, use_api, args)
 
     logger.debug(session)
 

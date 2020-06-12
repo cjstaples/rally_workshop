@@ -130,3 +130,9 @@ dmypy.json
 
 # local logging
 workshop.log
+.idea/inspectionProfiles/
+.idea/misc.xml
+.idea/modules.xml
+.idea/rally_workshop.iml
+.idea/vcs.xml
+venv*/*
