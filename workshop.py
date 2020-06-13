@@ -124,11 +124,11 @@ def initialize_rally_client(rally_auth, use_api, args):
     :return:
     """
     logger = logging.getLogger('workshop')
-    logger.info('--- initializing rally client')
-    logger.info('--- use_api: '+str(use_api))
+    logger.info('::: initializing rally client')
+    logger.info('::: use_api: ' + str(use_api))
 
     if use_api:
-        logger.info('::: *** CHECKING A HARDCODED API KEY? PLACE HERE ***')
+        # logger.info('::: *** CHECKING A HARDCODED API KEY? PLACE HERE ***')
         api_key = rally_auth
         # make sure we don't pass any api key value to the user creds
         rally_auth = None
@@ -172,6 +172,15 @@ def prompt_for_auth(system):
     return basic_auth
 
 
+def get_limit(args):
+    if args.limit:
+        try:
+            limit = int(args.limit)
+        except:
+            limit = 10
+    return limit
+
+
 def main():
     """
 
@@ -188,14 +197,10 @@ def main():
     logger.info('::: ')
     logger.info('::: parse workshop session arguments :::')
     args = parse_args()
-    logger.debug(args)
+    # logger.debug(args)
     logger.info('::: ')
 
-    if args.limit:
-        try:
-            limit = int(args.limit)
-        except:
-            limit = 10
+    limit = get_limit(args)
 
     if args.api:
         # use an api key if supplied
@@ -217,7 +222,8 @@ def main():
         # logger.info('::: rally_auth: '+str(rally_auth))
         session = initialize_rally_client(rally_auth, use_api, args)
 
-    logger.debug(session)
+    logger.info('::: ')
+    logger.info('::: Rally client object: ' + str(session))
 
     # display_rally_releases(session)
     # display_rally_user_story_sample(session,387227494600)

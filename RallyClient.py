@@ -8,7 +8,7 @@ RALLY_SERVER = 'rally1.rallydev.com'
 # Change this for work in the Rally Sandbox
 # RALLY_WORKSPACE = 'Workspace 1'
 
-RALLY_WORKSPACE = 'Workspace 1'
+RALLY_WORKSPACE = '2020'
 
 RALLY_ITEM_TYPES = {
     'Defect': 'Defect',
