@@ -1,7 +1,14 @@
 from pyral import Rally
 
 RALLY_SERVER = 'rally1.rallydev.com'
-RALLY_WORKSPACE = '2020'
+
+# Change to this for work in Production
+# RALLY_WORKSPACE = '2020'
+
+# Change this for work in the Rally Sandbox
+# RALLY_WORKSPACE = 'Workspace 1'
+
+RALLY_WORKSPACE = 'Workspace 1'
 
 RALLY_ITEM_TYPES = {
     'Defect': 'Defect',
