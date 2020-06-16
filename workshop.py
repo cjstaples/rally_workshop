@@ -127,6 +127,12 @@ def initialize_rally_client(rally_auth, use_api, args):
     logger.info('::: initializing rally client')
     logger.info('::: use_api: ' + str(use_api))
 
+    if args.rally_workspace:
+        rally_workspace = args.rally_workspace
+        logger.info('::: rally_workspace: ' + str(rally_workspace))
+    else:
+        rally_workspace = '2020'
+
     if use_api:
         # logger.info('::: *** CHECKING A HARDCODED API KEY? PLACE HERE ***')
         api_key = rally_auth
@@ -139,7 +145,7 @@ def initialize_rally_client(rally_auth, use_api, args):
         rally_auth = rally_auth
 
     session = []
-    session = RallyClient(rally_auth, api_key, ' '.join(args.rally_project), logger, args.test)
+    session = RallyClient(rally_auth, api_key, ' '.join(args.rally_project), rally_workspace, logger, args.test)
     return session
 
 
@@ -156,6 +162,7 @@ def parse_args():
     parser.add_argument('--lastpass-rally-site-name', '-lpr',
                         help='Use LastPass site entry name with Rally credentials')
     parser.add_argument('--limit', '-l', help="Optional maximum limit of results")
+    parser.add_argument('--rally_workspace', '-rw', nargs='+', help="Target Rally workspace")
     parser.add_argument('--test', '-t',
                         help='Show prospective changes without making updates to Rally',
                         action='store_true', default=False)
@@ -186,6 +193,8 @@ def main():
 
     :return:
     """
+    # TODO: get settings from workshop.ini
+    # TODO: write workshop.ini if it doesn't exist
 
     limit = 10
     logger = initialize_logger()

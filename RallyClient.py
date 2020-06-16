@@ -38,7 +38,7 @@ class RallyClient:
     """
     Rally Client base
     """
-    def __init__(self, basic_auth, api_key, project, logger, is_testing):
+    def __init__(self, basic_auth, api_key, project, workspace, logger, is_testing):
         """
         Instantiate and return a Rally client pointed at https://rally1.rallydev.com.
         """
@@ -49,10 +49,10 @@ class RallyClient:
 
         if api_key:
             logger.info('::: authenticate via API key')
-            self.client = Rally(RALLY_SERVER, apikey=api_key, workspace=RALLY_WORKSPACE, project=project)
+            self.client = Rally(RALLY_SERVER, apikey=api_key, workspace=workspace, project=project)
         else:
             logger.info('::: authenticate via user CREDS')
-            self.client = Rally(RALLY_SERVER, user=basic_auth[0], password=basic_auth[1], workspace=RALLY_WORKSPACE, project=project)
+            self.client = Rally(RALLY_SERVER, user=basic_auth[0], password=basic_auth[1], workspace=workspace, project=project)
 
         # self.client = Rally(RALLY_SERVER, user=basic_auth[0], password=basic_auth[1], workspace=RALLY_WORKSPACE, project=project)
 
