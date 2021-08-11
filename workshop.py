@@ -32,52 +32,110 @@ def display_rally_releases(session):
     pass
 
 
-def display_rally_test_cases(session):
+def display_rally_test_cases(session, limit):
     """
 
     :param session:
     """
     logger = logging.getLogger('workshop')
     logger.info('--- displaying rally test cases')
-    pass
+    test_cases = session.get_allowed_values('TestCase')
+
+    if len(test_cases) == 0:
+        logger.info('::: ')
+        logger.info('::: ** NO Test Cases found ** ')
+        logger.info('::: ')
+    else:
+        for index, test_case in zip(range(limit), test_cases):
+            # for story in stories:
+            # storyDetails = story.details()
+
+            name = test_case.Name
+            formatted_id = test_case.FormattedID
+
+            if test_case.Iteration.Name:
+                iteration = test_case.Iteration.Name
+            else:
+                iteration = 'None'
+
+            schedule_state = test_case.ScheduleState
+
+            logstring = '::::: ' + str(formatted_id).ljust(8) \
+                        + ' :: ' + str(schedule_state).ljust(12) \
+                        + ' :: ' + str(iteration).ljust(14) \
+                        + ' :: ' + str(name)
+            logger.info(logstring)
 
 
-def display_rally_test_sets(session):
+def display_rally_test_sets(session, limit):
     """
 
     :param session:
     """
     logger = logging.getLogger('workshop')
     logger.info('--- displaying rally test sets')
-    pass
+    test_sets = session.get_allowed_values('TestSet')
+
+    if len(test_sets) == 0:
+        logger.info('::: ')
+        logger.info('::: ** NO Test Sets found ** ')
+        logger.info('::: ')
+    else:
+        for index, test_set in zip(range(limit), test_sets):
+            # for story in stories:
+            # storyDetails = story.details()
+
+            name = test_set.Name
+            formatted_id = test_set.FormattedID
+
+            if test_set.Iteration.Name:
+                iteration = test_set.Iteration.Name
+            else:
+                iteration = 'None'
+
+            schedule_state = test_set.ScheduleState
+
+            logstring = '::::: ' + str(formatted_id).ljust(8) \
+                        + ' :: ' + str(schedule_state).ljust(12) \
+                        + ' :: ' + str(iteration).ljust(14) \
+                        + ' :: ' + str(name)
+            logger.info(logstring)
 
 
-def display_rally_user_stories(session, limit=10):
+
+def display_rally_user_stories(session, limit):
     """
-
     :param session:
+    :param limit:
     """
     logger = logging.getLogger('workshop')
     logger.info('--- displaying rally user stories')
     stories = session.get_allowed_values('UserStory')
 
-    for index, story in zip(range(limit), stories):
-        # for story in stories:
-        # storyDetails = story.details()
+    if len(stories) == 0:
+        logger.info('::: ')
+        logger.info('::: ** NO User Stories found ** ')
+        logger.info('::: ')
+    else:
+        for index, story in zip(range(limit), stories):
+            # for story in stories:
+            # storyDetails = story.details()
 
-        name = story.Name
-        formatted_id = story.FormattedID
-        try:
-            iteration = story.Iteration.Name
-        except:
-            iteration = 'None'
-        schedule_state = story.ScheduleState
+            name = story.Name
+            formatted_id = story.FormattedID
 
-        logstring = '::::: ' + str(formatted_id).ljust(8) \
-                    + ' :: ' + str(schedule_state).ljust(12) \
-                    + ' :: ' + str(iteration).ljust(14) \
-                    + ' :: ' + str(name)
-        logger.info(logstring)
+            if story.Iteration.Name:
+                iteration = story.Iteration.Name
+            else:
+                iteration = 'None'
+
+            schedule_state = story.ScheduleState
+
+            logstring = '::::: ' + str(formatted_id).ljust(8) \
+                        + ' :: ' + str(schedule_state).ljust(12) \
+                        + ' :: ' + str(iteration).ljust(14) \
+                        + ' :: ' + str(name)
+            logger.info(logstring)
 
 
 def get_basic_auth_from_lastpass(site_name):
@@ -133,6 +191,12 @@ def initialize_rally_client(rally_auth, use_api, args):
     else:
         rally_workspace = '2020'
 
+    if args.rally_project:
+        rally_project = args.rally_project
+        logger.info('::: rally_project: ' + str(rally_project))
+    else:
+        rally_project = 'Project Sample'
+
     if use_api:
         # logger.info('::: *** CHECKING A HARDCODED API KEY? PLACE HERE ***')
         api_key = rally_auth
@@ -145,7 +209,7 @@ def initialize_rally_client(rally_auth, use_api, args):
         rally_auth = rally_auth
 
     session = []
-    session = RallyClient(rally_auth, api_key, ' '.join(args.rally_project), rally_workspace, logger, args.test)
+    session = RallyClient(rally_auth, api_key, ' '.join(rally_project), rally_workspace, logger, args.test)
     return session
 
 
@@ -237,8 +301,8 @@ def main():
     # display_rally_releases(session)
     # display_rally_user_story_sample(session,387227494600)
     display_rally_user_stories(session, limit)
-    display_rally_test_cases(session)
-    display_rally_test_sets(session)
+    display_rally_test_cases(session, limit)
+    display_rally_test_sets(session, limit)
 
     logger.info('::: ')
     logger.info('::: ending workshop session   :::')
