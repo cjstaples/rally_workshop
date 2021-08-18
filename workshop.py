@@ -22,13 +22,15 @@ def display_rally_releases(session):
     """
     logger = logging.getLogger('workshop')
     logger.info('--- displaying rally releases')
+    rls_start = ''
+    rls_date = ''
     response = session.get('Release', fetch="Project,Name,ReleaseStartDate,ReleaseDate",
                            order="ReleaseDate")
     for release in response:
-        rlsStart = release.ReleaseStartDate.split('T')[0]  # just need the date part
-    rlsDate = release.ReleaseDate.split('T')[0]  # ditto
-    logger.info('Project,Name,ReleaseStartDate,ReleaseDate')
-    logger.info(release.Project.Name, release.Name, rlsStart, rlsDate)
+        rls_start = release.ReleaseStartDate.split('T')[0]  # just need the date part
+    rls_date = release.ReleaseDate.split('T')[0]  # ditto
+    logger.info('Project, Name, ReleaseStartDate, ReleaseDate')
+    logger.info(release.Project.Name, release.Name, rls_start, rls_date)
     pass
 
 
@@ -36,6 +38,7 @@ def display_rally_test_cases(session, limit):
     """
 
     :param session:
+    :param limit:
     """
     logger = logging.getLogger('workshop')
     logger.info('--- displaying rally test cases')
@@ -47,22 +50,19 @@ def display_rally_test_cases(session, limit):
         logger.info('::: ')
     else:
         for index, test_case in zip(range(limit), test_cases):
-            # for story in stories:
-            # storyDetails = story.details()
-
             name = test_case.Name
             formatted_id = test_case.FormattedID
 
-            if test_case.Iteration.Name:
-                iteration = test_case.Iteration.Name
+            if test_case.TestFolder.Name:
+                test_folder = test_case.TestFolder.Name
             else:
-                iteration = 'None'
+                test_folder = 'None'
 
-            schedule_state = test_case.ScheduleState
+            type = test_case.Type
 
             logstring = '::::: ' + str(formatted_id).ljust(8) \
-                        + ' :: ' + str(schedule_state).ljust(12) \
-                        + ' :: ' + str(iteration).ljust(14) \
+                        + ' :: ' + str(type).ljust(12) \
+                        + ' :: ' + str(test_folder).ljust(14) \
                         + ' :: ' + str(name)
             logger.info(logstring)
 
@@ -71,6 +71,7 @@ def display_rally_test_sets(session, limit):
     """
 
     :param session:
+    :param limit:
     """
     logger = logging.getLogger('workshop')
     logger.info('--- displaying rally test sets')
@@ -82,9 +83,6 @@ def display_rally_test_sets(session, limit):
         logger.info('::: ')
     else:
         for index, test_set in zip(range(limit), test_sets):
-            # for story in stories:
-            # storyDetails = story.details()
-
             name = test_set.Name
             formatted_id = test_set.FormattedID
 
