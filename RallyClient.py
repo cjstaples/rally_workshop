@@ -116,15 +116,35 @@ class RallyClient:
     def get_rally_task_link(self, item):
         return self.get_rally_link(RALLY_ITEM_TYPES['Task'].lower(), item)
 
+#   General purpose get, usable for the following values of entity:
+#       Story, UserStory, Defect, DefectSuite, Task, TestCase, TestSet, PortfolioItem; Iteration, Milestone, Release, Project
     def get_allowed_values(self, entity):
         response = self.client.get(entity)
         return [item for item in response]
+
+    def get_allowed_defects(self):
+        return self.get_allowed_values('Defect')
 
     def get_allowed_iterations(self):
         return self.get_allowed_values('Iteration')
 
     def get_allowed_milestones(self):
         return self.get_allowed_values('Milestone')
+
+    def get_allowed_releases(self):
+        return self.get_allowed_values('Release')
+
+    def get_allowed_projects(self):
+        return self.get_allowed_values('Project')
+
+    def get_allowed_test_cases(self):
+        return self.get_allowed_values('TestCase')
+
+    def get_allowed_test_sets(self):
+        return self.get_allowed_values('TestSet')
+
+    def get_allowed_user_stories(self):
+        return self.get_allowed_values('UserStory')
 
     @staticmethod
     def set_id(item, formatted_id):
@@ -239,6 +259,10 @@ class RallyClient:
         self.log.debug(f'    with values: {item_data}')
         return new_item
 
+#   Requires DICT item_data:
+#
+#
+#
     def create_user_story(self, item_data):
         return self.create_item(RALLY_ITEM_TYPES['UserStory'], item_data)
 
@@ -247,6 +271,9 @@ class RallyClient:
 
     def create_task(self, item_data):
         return self.create_item(RALLY_ITEM_TYPES['Task'], item_data)
+
+    def create_test_case_result(self, item_data):
+        return self.create_item(RALLY_ITEM_TYPES['TestCaseResult'], item_data)
 
     def update_item(self, item_type, item_data):
         if not self.is_testing:

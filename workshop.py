@@ -15,23 +15,96 @@ from logging.config import fileConfig
 from RallyClient import RallyClient, RALLY_ITEM_TYPES
 
 
-def display_rally_releases(session):
+def create_sample_user_story(session):
+    logger = logging.getLogger('workshop')
+    logger.info('--- creating user story')
+    item_data = {"Name": "SAMPLE_STORY"}
+    new_story = session.create_user_story(item_data)
+
+
+def display_rally_defects(session, limit):
+    """
+
+    :param session:
+    :param limit:
+    """
+    logger = logging.getLogger('workshop')
+    logger.info('--- displaying rally defects')
+    defects = session.get_allowed_defects()
+
+    if len(defects) == 0:
+        logger.info('::: ')
+        logger.info('::: ** NO Defects found ** ')
+        logger.info('::: ')
+    else:
+        for index, defect in zip(range(limit), defects):
+            name = defect.Name
+            formatted_id = defect.FormattedID
+
+            if defect.Iteration and defect.Iteration.Name:
+                iteration = defect.Iteration.Name
+            else:
+                iteration = 'None'
+
+            schedule_state = defect.ScheduleState
+
+            logstring = '::::: ' + str(formatted_id).ljust(8) \
+                        + ' :: ' + str(schedule_state).ljust(12) \
+                        + ' :: ' + str(iteration).ljust(14) \
+                        + ' :: ' + str(name)
+            logger.info(logstring)
+
+
+def display_rally_releases(session, limit):
     """
 
     :param session:
     """
     logger = logging.getLogger('workshop')
     logger.info('--- displaying rally releases')
-    rls_start = ''
-    rls_date = ''
-    response = session.get('Release', fetch="Project,Name,ReleaseStartDate,ReleaseDate",
-                           order="ReleaseDate")
-    for release in response:
-        rls_start = release.ReleaseStartDate.split('T')[0]  # just need the date part
-    rls_date = release.ReleaseDate.split('T')[0]  # ditto
-    logger.info('Project, Name, ReleaseStartDate, ReleaseDate')
-    logger.info(release.Project.Name, release.Name, rls_start, rls_date)
-    pass
+    releases = session.get_allowed_releases()
+
+    if len(releases) == 0:
+        logger.info('::: ')
+        logger.info('::: ** NO Releases found ** ')
+        logger.info('::: ')
+    else:
+        for index, release in zip(range(limit), releases):
+            # for story in stories:
+            # storyDetails = story.details()
+
+            name = release.Name
+            formatted_id = release.FormattedID
+
+            logstring = '::::: ' + str(formatted_id).ljust(8) \
+                        + ' :: ' + str(name)
+            logger.info(logstring)
+
+
+def display_rally_projects(session, limit):
+    """
+
+    :param session:
+    """
+    logger = logging.getLogger('workshop')
+    logger.info('--- displaying rally projects')
+    projects = session.get_allowed_projects()
+
+    if len(projects) == 0:
+        logger.info('::: ')
+        logger.info('::: ** NO Projects found ** ')
+        logger.info('::: ')
+    else:
+        for index, project in zip(range(limit), projects):
+            # for story in stories:
+            # storyDetails = story.details()
+
+            name = project.Name
+            state = project.State
+
+            logstring = '::::: ' + str(state).ljust(8) \
+                        + ' :: ' + str(name)
+            logger.info(logstring)
 
 
 def display_rally_test_cases(session, limit):
@@ -42,7 +115,7 @@ def display_rally_test_cases(session, limit):
     """
     logger = logging.getLogger('workshop')
     logger.info('--- displaying rally test cases')
-    test_cases = session.get_allowed_values('TestCase')
+    test_cases = session.get_allowed_test_cases()
 
     if len(test_cases) == 0:
         logger.info('::: ')
@@ -75,7 +148,7 @@ def display_rally_test_sets(session, limit):
     """
     logger = logging.getLogger('workshop')
     logger.info('--- displaying rally test sets')
-    test_sets = session.get_allowed_values('TestSet')
+    test_sets = session.get_allowed_test_sets()
 
     if len(test_sets) == 0:
         logger.info('::: ')
@@ -100,7 +173,6 @@ def display_rally_test_sets(session, limit):
             logger.info(logstring)
 
 
-
 def display_rally_user_stories(session, limit):
     """
     :param session:
@@ -108,7 +180,7 @@ def display_rally_user_stories(session, limit):
     """
     logger = logging.getLogger('workshop')
     logger.info('--- displaying rally user stories')
-    stories = session.get_allowed_values('UserStory')
+    stories = session.get_allowed_user_stories()
 
     if len(stories) == 0:
         logger.info('::: ')
@@ -122,7 +194,7 @@ def display_rally_user_stories(session, limit):
             name = story.Name
             formatted_id = story.FormattedID
 
-            if story.Iteration.Name:
+            if story.Iteration and story.Iteration.Name:
                 iteration = story.Iteration.Name
             else:
                 iteration = 'None'
@@ -296,11 +368,18 @@ def main():
     logger.info('::: ')
     logger.info('::: Rally client object: ' + str(session))
 
-    # display_rally_releases(session)
-    # display_rally_user_story_sample(session,387227494600)
-    display_rally_user_stories(session, limit)
+    create_sample_user_story(session)
+
+    display_rally_defects(session, limit)
+    display_rally_projects(session, limit)
+    display_rally_releases(session, limit)
     display_rally_test_cases(session, limit)
     display_rally_test_sets(session, limit)
+    display_rally_user_stories(session, limit)
+    # display_rally_user_story_sample(session,387227494600)
+
+    item_data = {}
+
 
     logger.info('::: ')
     logger.info('::: ending workshop session   :::')
