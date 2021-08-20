@@ -21,7 +21,8 @@ def create_sample_test_case(session):
     workspace = session.client.getWorkspace()
     project = session.client.getProject()
     item_data = {"Name": "SAMPLE_TEST_CASE",
-                 "Type": "Functional",
+                 "Method": "Automated",
+                 "Type": "Regression",
                  "Workspace": workspace.ref,
                  "Project": project.ref,
                 }
@@ -146,7 +147,7 @@ def display_rally_test_cases(session, limit):
             name = test_case.Name
             formatted_id = test_case.FormattedID
 
-            if test_case.TestFolder.Name:
+            if test_case.TestFolder and test_case.TestFolder.Name:
                 test_folder = test_case.TestFolder.Name
             else:
                 test_folder = 'None'

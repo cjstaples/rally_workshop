@@ -12,6 +12,8 @@ RALLY_WORKSPACE = '2020'
 
 RALLY_ITEM_TYPES = {
     'Defect': 'Defect',
+    'TestCase': 'TestCase',
+    'TestCaseResult': 'TestCaseResult',
     'UserStory': 'UserStory',
     'Task': 'Task'
 }
