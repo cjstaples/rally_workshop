@@ -15,6 +15,26 @@ from logging.config import fileConfig
 from RallyClient import RallyClient, RALLY_ITEM_TYPES
 
 
+def create_sample_test_case(session):
+    logger = logging.getLogger('workshop')
+    logger.info('--- creating test case')
+    workspace = session.client.getWorkspace()
+    project = session.client.getProject()
+    item_data = {"Name": "SAMPLE_TEST_CASE",
+                 "Type": "Functional",
+                 "Workspace": workspace.ref,
+                 "Project": project.ref,
+                }
+    new_test_case = session.create_test_case(item_data)
+
+
+def create_sample_test_case_result(session):
+    logger = logging.getLogger('workshop')
+    logger.info('--- creating test case result')
+    item_data = {"Name": "SAMPLE_TEST_CASE_RESULT"}
+    new_test_case_result = session.create_test_case_result(item_data)
+
+
 def create_sample_user_story(session):
     logger = logging.getLogger('workshop')
     logger.info('--- creating user story')
@@ -368,7 +388,8 @@ def main():
     logger.info('::: ')
     logger.info('::: Rally client object: ' + str(session))
 
-    create_sample_user_story(session)
+#    create_sample_user_story(session)
+    create_sample_test_case(session)
 
     display_rally_defects(session, limit)
     display_rally_projects(session, limit)

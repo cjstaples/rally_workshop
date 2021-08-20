@@ -272,6 +272,9 @@ class RallyClient:
     def create_task(self, item_data):
         return self.create_item(RALLY_ITEM_TYPES['Task'], item_data)
 
+    def create_test_case(self, item_data):
+        return self.create_item(RALLY_ITEM_TYPES['TestCase'], item_data)
+
     def create_test_case_result(self, item_data):
         return self.create_item(RALLY_ITEM_TYPES['TestCaseResult'], item_data)
 
