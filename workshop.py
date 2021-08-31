@@ -1,30 +1,18 @@
-#  messing around with python utilities for agile central / rally
+#  python workshop for agile central / rally
 #  use this file as a default main runner
 #
 
 import argparse
-from datetime import date, datetime
-from json import dumps
-
-import chardet
 import configparser
 import getpass
 import logging
-import pyral
-import requests
 import subprocess
 import sys
 
-from logging.config import fileConfig
-from RallyClient import RallyClient, RALLY_ITEM_TYPES
-
-
-def json_serial(obj):
-    """JSON serializer for objects not serializable by default json code"""
-
-    if isinstance(obj, (datetime, date)):
-        return obj.isoformat()
-    raise TypeError("Type %s not serializable" % type(obj))
+from datetime import datetime
+from json import dumps
+from RallyClient import RallyClient
+from utils import get_runtime_test, get_runtime_limit
 
 
 def config_load():
@@ -379,48 +367,28 @@ def prompt_for_auth(system):
     return basic_auth
 
 
-def get_limit(args):
-    if args.limit:
-        try:
-            limit = int(args.limit)
-        except:
-            limit = 10
-    return limit
-
-
 def main():
     """
 
     :return:
     """
-
     logger = initialize_logger()
-
     logger.info('::: ')
     logger.info('::: starting workshop session :::')
-
     logger.info('::: initialize workshop session defaults :::')
-    logger.info('::: ')
 
-    # TODO: write workshop.ini if it doesn't exist
+    # TODO: config -- write workshop.ini if it doesn't exist
     config = config_load()
 
-    logger.info('::: ')
     logger.info('::: parse workshop session arguments :::')
     args = parse_args()
-    # logger.debug(args)
     logger.info('::: ')
 
-    if args.limit:
-        logger.info('::: limit value from args')
-        limit = get_limit(args)
-    elif config['default']['limit']:
-        logger.info('::: limit value from config')
-        limit = config['default']['limit']
-    else:
-        logger.info('::: limit not found, default set')
-        limit = 88
-    logger.info('::: ')
+    test = get_runtime_test(args, config, logger)
+    limit = get_runtime_limit(args, config, logger)
+
+#   TODO: utils function for api
+#   api = get_runtime_api(args, config, logger)
 
     if args.api:
         # use an api key if supplied
