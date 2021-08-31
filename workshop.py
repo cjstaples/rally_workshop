@@ -3,6 +3,9 @@
 #
 
 import argparse
+from datetime import date, datetime
+from json import dumps
+
 import chardet
 import getpass
 import logging
@@ -15,6 +18,14 @@ from logging.config import fileConfig
 from RallyClient import RallyClient, RALLY_ITEM_TYPES
 
 
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
+
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    raise TypeError("Type %s not serializable" % type(obj))
+
+
 def create_sample_test_case(session):
     logger = logging.getLogger('workshop')
     logger.info('--- creating test case')
@@ -25,14 +36,31 @@ def create_sample_test_case(session):
                  "Type": "Regression",
                  "Workspace": workspace.ref,
                  "Project": project.ref,
-                }
+                 }
     new_test_case = session.create_test_case(item_data)
+    return new_test_case
 
 
-def create_sample_test_case_result(session):
+def create_sample_test_case_result(session, testcase_sample):
     logger = logging.getLogger('workshop')
     logger.info('--- creating test case result')
-    item_data = {"Name": "SAMPLE_TEST_CASE_RESULT"}
+    workspace = session.client.getWorkspace()
+    project = session.client.getProject()
+    build_tested = "2021.00.00"
+    #   date_sample = "2021-01-01 00:00:00"
+    test_verdict = "Pass"
+
+    build = build_tested
+    run_date = dumps(datetime.now(), default=json_serial)
+    #    run_date = date.today()
+    verdict = test_verdict
+
+    item_data = {"Workspace": workspace.ref,
+                 "TestCase": testcase_sample.ref,
+                 "Build": build_tested,
+                 "Date": run_date,
+                 "Verdict": verdict,
+                 }
     new_test_case_result = session.create_test_case_result(item_data)
 
 
@@ -152,10 +180,10 @@ def display_rally_test_cases(session, limit):
             else:
                 test_folder = 'None'
 
-            type = test_case.Type
+            test_case_type = test_case.Type
 
             logstring = '::::: ' + str(formatted_id).ljust(8) \
-                        + ' :: ' + str(type).ljust(12) \
+                        + ' :: ' + str(test_case_type).ljust(12) \
                         + ' :: ' + str(test_folder).ljust(14) \
                         + ' :: ' + str(name)
             logger.info(logstring)
@@ -389,8 +417,9 @@ def main():
     logger.info('::: ')
     logger.info('::: Rally client object: ' + str(session))
 
-#    create_sample_user_story(session)
-    create_sample_test_case(session)
+    #   create_sample_user_story(session)
+    #   testcase_sample = create_sample_test_case(session)
+    #   create_sample_test_case_result(session, testcase_sample)
 
     display_rally_defects(session, limit)
     display_rally_projects(session, limit)
@@ -401,7 +430,6 @@ def main():
     # display_rally_user_story_sample(session,387227494600)
 
     item_data = {}
-
 
     logger.info('::: ')
     logger.info('::: ending workshop session   :::')
