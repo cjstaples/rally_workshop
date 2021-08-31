@@ -7,6 +7,7 @@ from datetime import date, datetime
 from json import dumps
 
 import chardet
+import configparser
 import getpass
 import logging
 import pyral
@@ -24,6 +25,22 @@ def json_serial(obj):
     if isinstance(obj, (datetime, date)):
         return obj.isoformat()
     raise TypeError("Type %s not serializable" % type(obj))
+
+
+def config_load():
+    config = configparser.ConfigParser()
+    config['default'] = {}
+    configfile = 'workshop.ini'
+
+    try:
+        config.read(configfile)
+    except FileNotFoundError:
+        config['default'] = {
+            "api": "",
+            "limit": "99",
+            "test": "True",
+        }
+    return config
 
 
 def create_sample_test_case(session):
@@ -376,15 +393,17 @@ def main():
 
     :return:
     """
-    # TODO: get settings from workshop.ini
-    # TODO: write workshop.ini if it doesn't exist
 
-    limit = 10
     logger = initialize_logger()
 
     logger.info('::: ')
     logger.info('::: starting workshop session :::')
+
+    logger.info('::: initialize workshop session defaults :::')
     logger.info('::: ')
+
+    # TODO: write workshop.ini if it doesn't exist
+    config = config_load()
 
     logger.info('::: ')
     logger.info('::: parse workshop session arguments :::')
@@ -392,7 +411,16 @@ def main():
     # logger.debug(args)
     logger.info('::: ')
 
-    limit = get_limit(args)
+    if args.limit:
+        logger.info('::: limit value from args')
+        limit = get_limit(args)
+    elif config['default']['limit']:
+        logger.info('::: limit value from config')
+        limit = config['default']['limit']
+    else:
+        logger.info('::: limit not found, default set')
+        limit = 88
+    logger.info('::: ')
 
     if args.api:
         # use an api key if supplied
