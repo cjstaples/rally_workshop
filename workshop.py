@@ -377,7 +377,7 @@ def main():
     logger.info('::: starting workshop session :::')
     logger.info('::: initialize workshop session defaults :::')
 
-    # TODO: config -- write workshop.ini if it doesn't exist
+#   TODO: config -- write workshop.ini if it doesn't exist
     config = config_load()
 
     logger.info('::: parse workshop session arguments :::')
@@ -387,7 +387,7 @@ def main():
     test = get_runtime_test(args, config, logger)
     limit = get_runtime_limit(args, config, logger)
 
-#   TODO: utils function for api
+#   TODO: move existing api runtime code into utils function
 #   api = get_runtime_api(args, config, logger)
 
     if args.api:

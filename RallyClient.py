@@ -40,23 +40,22 @@ class RallyClient:
     """
     Rally Client base
     """
-    def __init__(self, basic_auth, api_key, project, workspace, logger, is_testing):
+    def __init__(self, auth, api_key, project, workspace, logger, is_testing):
         """
         Instantiate and return a Rally client pointed at https://rally1.rallydev.com.
         """
         self.log = logger
         self.is_testing = is_testing
-        # logger.info('::: ')
-        # logger.info('::: api_key: '+str(api_key))
 
         if api_key:
             logger.info('::: authenticate via API key')
             self.client = Rally(RALLY_SERVER, apikey=api_key, workspace=workspace, project=project)
         else:
             logger.info('::: authenticate via user CREDS')
-            self.client = Rally(RALLY_SERVER, user=basic_auth[0], password=basic_auth[1], workspace=workspace, project=project)
+            self.client = Rally(RALLY_SERVER, user=auth[0], password=auth[1], workspace=workspace, project=project)
 
-        # self.client = Rally(RALLY_SERVER, user=basic_auth[0], password=basic_auth[1], workspace=RALLY_WORKSPACE, project=project)
+        # self.client =
+        #   Rally(RALLY_SERVER, user=basic_auth[0], password=basic_auth[1], workspace=RALLY_WORKSPACE, project=project)
 
     @staticmethod
     def get_value_from_response(entity, response):
@@ -82,7 +81,7 @@ class RallyClient:
         response = self.client.get(item_type, fetch=True, query=f'FormattedID = {item_id}')
         return self.get_value_from_response(item_type, response)
 
-    # TODO:  This probably is non-functional. Fix or remove.
+    #   TODO:  Check whether this is functional.  If so, fix or remove.
     def get_iteration(self, item_id):
         return self.get_item(item_id, RALLY_ITEM_TYPES['Iteration'])
 
@@ -119,7 +118,8 @@ class RallyClient:
         return self.get_rally_link(RALLY_ITEM_TYPES['Task'].lower(), item)
 
 #   General purpose get, usable for the following values of entity:
-#       Story, UserStory, Defect, DefectSuite, Task, TestCase, TestSet, PortfolioItem; Iteration, Milestone, Release, Project
+#       Story, UserStory, Defect, DefectSuite, Task, TestCase, TestSet, PortfolioItem;
+#       Iteration, Milestone, Release, Project
     def get_allowed_values(self, entity):
         response = self.client.get(entity)
         return [item for item in response]
@@ -324,9 +324,5 @@ class RallyClient:
             self.log.debug(f'RALLY ADDING Discussion Post {post}')
 
     def add_attachment(self, item, attachment):
-        # TODO (https://pyral.readthedocs.io/en/latest/interface.html#addAttachment)
+        #   TODO:   (https://pyral.readthedocs.io/en/latest/interface.html#addAttachment)
         self.log.debug('RALLY ADDING Attachment')
-
-#
-
-
