@@ -11,15 +11,19 @@ def get_limit(args):
     if args.limit:
         try:
             limit = int(args.limit)
-        except:
+        except ValueError:
             limit = 10
     return limit
 
 
-def get_runtime_limit(args, config, logger):
-    # limit = 77
-    # logger.info('::: limit value ' + str(limit))
+def get_test(args):
+    test = False
+    if args.test:
+        test = True
+    return test
 
+
+def get_runtime_limit(args, config, logger):
     if args.limit:
         limit = get_limit(args)
         logger.info(':::     limit value ' + str(limit) + ' from args')
