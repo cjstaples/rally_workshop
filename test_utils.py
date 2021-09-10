@@ -27,12 +27,18 @@ def test_get_project():
 
 
 def test_get_sitename():
-    args = argparse.Namespace(sitename='sandbox_sitename_replace')
+    args = argparse.Namespace(sitename='some_sandbox_sitename')
     sitename = utils.get_sitename(args)
-    assert sitename == 'something_other_than_this'
+    assert sitename == 'some_sandbox_sitename'
 
 
 def test_get_workspace():
     args = argparse.Namespace(rally_workspace='2021')
     workspace = utils.get_workspace(args)
     assert workspace == '2021'
+
+
+def test_settings_file():
+    config = utils.config_load()
+    assert config['default'].name == 'default'
+

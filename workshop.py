@@ -3,7 +3,6 @@
 #
 
 import argparse
-import configparser
 import getpass
 import logging
 import subprocess
@@ -12,23 +11,7 @@ import sys
 from datetime import datetime
 from json import dumps
 from RallyClient import RallyClient
-from utils import get_runtime_test, get_runtime_limit
-
-
-def config_load():
-    config = configparser.ConfigParser()
-    config['default'] = {}
-    configfile = 'workshop.ini'
-
-    try:
-        config.read(configfile)
-    except FileNotFoundError:
-        config['default'] = {
-            "api": "",
-            "limit": "99",
-            "test": "True",
-        }
-    return config
+from utils import get_runtime_test, get_runtime_limit, config_load, json_serial
 
 
 def create_sample_test_case(session):
@@ -112,6 +95,7 @@ def display_rally_defects(session, limit):
 def display_rally_releases(session, limit):
     """
 
+    :param limit:
     :param session:
     """
     logger = logging.getLogger('workshop')
@@ -138,6 +122,7 @@ def display_rally_releases(session, limit):
 def display_rally_projects(session, limit):
     """
 
+    :param limit:
     :param session:
     """
     logger = logging.getLogger('workshop')

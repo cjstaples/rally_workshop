@@ -16,11 +16,29 @@ def get_limit(args):
     return limit
 
 
+def get_project(args):
+    if args.rally_project:
+        project = args.rally_project
+    return project
+
+
+def get_sitename(args):
+    if args.sitename:
+        sitename = args.sitename
+    return sitename
+
+
 def get_test(args):
     test = False
     if args.test:
         test = True
     return test
+
+
+def get_workspace(args):
+    if args.rally_workspace:
+        workspace = args.rally_workspace
+    return workspace
 
 
 def get_runtime_limit(args, config, logger):
@@ -58,3 +76,18 @@ def json_serial(obj):
         return obj.isoformat()
     raise TypeError("Type %s not serializable" % type(obj))
 
+
+def config_load():
+    config = configparser.ConfigParser()
+    config['default'] = {}
+    configfile = 'workshop.ini'
+
+    try:
+        config.read(configfile)
+    except FileNotFoundError:
+        config['default'] = {
+            "api": "",
+            "limit": "99",
+            "test": "True",
+        }
+    return config
